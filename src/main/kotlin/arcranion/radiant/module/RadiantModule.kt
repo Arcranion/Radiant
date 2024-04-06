@@ -2,7 +2,7 @@ package arcranion.radiant.module
 
 import arcranion.radiant.extensions.radiant.disableAllCommands
 import arcranion.radiant.extensions.radiant.enableAllCommands
-import arcranion.radiant.internationalization.RadiantI18nManager
+import arcranion.radiant.internationalization.RadiantI18n
 import org.bukkit.plugin.Plugin
 import org.koin.core.component.KoinComponent
 
@@ -16,7 +16,7 @@ abstract class RadiantModule(
     open val plugin: Plugin
         get() = parent?.plugin!!
 
-    open val i18n: RadiantI18nManager
+    open val i18n: RadiantI18n
         get() = parent?.i18n!!
 
     val submodules = RadiantModuleList(this)

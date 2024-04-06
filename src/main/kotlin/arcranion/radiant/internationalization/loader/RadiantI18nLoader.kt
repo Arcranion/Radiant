@@ -10,7 +10,7 @@ sealed interface RadiantI18nLoader {
 
     fun loadFromResource(clazz: Class<*>, name: String): RadiantI18nData {
         val stream = clazz.getResourceAsStream(name)
-            ?: throw RuntimeException("Resource \"$name\" not found at class ${clazz.canonicalName ?: clazz.simpleName}")
+            ?: throw RuntimeException("Resource \"$name\" not found at classloader ${clazz.classLoader.name}")
 
         return this.load(stream)
     }

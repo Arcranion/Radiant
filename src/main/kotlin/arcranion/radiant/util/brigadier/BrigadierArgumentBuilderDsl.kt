@@ -36,14 +36,14 @@ sealed class BrigadierBaseArgumentBuilder<
 
     fun literal(name: String, vararg aliases: String, setup: @BrigadierDsl BrigadierLiteralArgumentBuilder<T>.() -> Unit = {}) {
         val mainLiteralArgument =
-            BrigadierLiteralArgumentBuilder(LiteralArgumentBuilder.literal<T>(name))
+            BrigadierLiteralArgumentBuilder(LiteralArgumentBuilder.literal<T>(name), module)
                 .apply(setup)
                 .builder
                 .build()
 
         builder.then(mainLiteralArgument)
         for (alias in aliases) {
-            val redirectLiteralArgument = BrigadierLiteralArgumentBuilder(LiteralArgumentBuilder.literal<T>(alias))
+            val redirectLiteralArgument = BrigadierLiteralArgumentBuilder(LiteralArgumentBuilder.literal<T>(alias), module)
             redirectLiteralArgument.redirect(mainLiteralArgument)
 
             builder.then(redirectLiteralArgument.build())
@@ -53,7 +53,7 @@ sealed class BrigadierBaseArgumentBuilder<
 
     fun <A> argument(name: String, type: ArgumentType<A>, setup: @BrigadierDsl BrigadierRequiredArgumentBuilder<T, A>.() -> Unit = {}) {
         builder.then(
-            BrigadierRequiredArgumentBuilder(RequiredArgumentBuilder.argument<T, A>(name, type)).apply(setup).builder
+            BrigadierRequiredArgumentBuilder(RequiredArgumentBuilder.argument<T, A>(name, type), module).apply(setup).builder
         )
     }
 

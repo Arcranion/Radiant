@@ -5,16 +5,19 @@ import arcranion.radiant.platform.bukkit.commandDispatcher
 import arcranion.radiant.util.brigadier.BrigadierLiteralArgumentBuilder
 import arcranion.radiant.extensions.brigadier.register
 import arcranion.radiant.extensions.brigadier.unregister
+import arcranion.radiant.util.brigadier.BrigadierDsl
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import net.minecraft.commands.CommandSourceStack
 import java.util.*
 
+@BrigadierDsl
 class BrigadierCommandsBuilder(
     val module: RadiantModule
 ) {
-    fun command(name: String, setup: BrigadierLiteralArgumentBuilder<CommandSourceStack>.() -> Unit) {
+    fun command(name: String, setup: @BrigadierDsl BrigadierLiteralArgumentBuilder<CommandSourceStack>.() -> Unit) {
         val builder = BrigadierLiteralArgumentBuilder<CommandSourceStack>(
-            LiteralArgumentBuilder.literal(name)
+            LiteralArgumentBuilder.literal(name),
+            module
         ).apply(setup).builder
         val build = module.plugin.server.commandDispatcher.register(builder)
 
@@ -29,6 +32,6 @@ class BrigadierCommandsBuilder(
     }
 }
 
-fun RadiantModule.brigadier(setup: BrigadierCommandsBuilder.() -> Unit) {
+fun RadiantModule.brigadier(setup: @BrigadierDsl BrigadierCommandsBuilder.() -> Unit) {
     BrigadierCommandsBuilder(this).apply(setup)
 }

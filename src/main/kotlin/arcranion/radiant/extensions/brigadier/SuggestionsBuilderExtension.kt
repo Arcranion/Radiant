@@ -12,13 +12,13 @@ fun SuggestionsBuilder.suggestAll(list: List<String>) {
 }
 
 @JvmName("suggestAllTooltip")
-fun SuggestionsBuilder.suggestAll(list: List<Pair<String, Message>>) {
+fun SuggestionsBuilder.suggestAll(list: List<Pair<String, Message?>>) {
     list.forEach { suggest(it.first, it.second) }
 }
 
 @JvmName("suggestAllStringTooltip")
-fun SuggestionsBuilder.suggestAll(list: List<Pair<String, String>>) {
-    list.forEach { suggest(it.first, LiteralMessage(it.second)) }
+fun SuggestionsBuilder.suggestAll(list: List<Pair<String, String?>>) {
+    list.forEach { suggest(it.first, it.second?.let { s -> LiteralMessage(s) }) }
 }
 
 @JvmName("suggestAllInt")
@@ -27,11 +27,11 @@ fun SuggestionsBuilder.suggestAll(list: List<Int>) {
 }
 
 @JvmName("suggestAllIntTooltip")
-fun SuggestionsBuilder.suggestAll(list: List<Pair<Int, Message>>) {
+fun SuggestionsBuilder.suggestAll(list: List<Pair<Int, Message?>>) {
     list.forEach { suggest(it.first, it.second) }
 }
 
 @JvmName("suggestAllIntStringTooltip")
-fun SuggestionsBuilder.suggestAll(list: List<Pair<Int, String>>) {
-    list.forEach { suggest(it.first, LiteralMessage(it.second)) }
+fun SuggestionsBuilder.suggestAll(list: List<Pair<Int, String?>>) {
+    list.forEach { suggest(it.first, it.second?.let { s -> LiteralMessage(s) }) }
 }

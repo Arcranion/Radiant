@@ -1,18 +1,25 @@
 package arcranion.radiant.internationalization
 
 import arcranion.radiant.internationalization.loader.RadiantI18nLoader
-import arcranion.radiant.util.reflection.Reflect
-import org.jline.reader.Candidate
+import org.bukkit.command.CommandSender
+import org.bukkit.command.ConsoleCommandSender
+import org.bukkit.entity.Player
 import java.io.InputStream
 import java.util.Locale
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.internal.impl.descriptors.ClassKind
 
-open class RadiantI18nManager(
+open class RadiantI18n(
     val loader: RadiantI18nLoader
 ) {
 
     private val data = mutableMapOf<Locale, MutableList<RadiantI18nData>>()
+
+    open val availableLocales
+        get() = data.keys.toList()
+
+    open val fallbackLocale: Locale = Locale.ENGLISH
+    open val consoleLocale: Locale
+        get() = fallbackLocale
 
     fun loadCandidate(stream: InputStream, loader: RadiantI18nLoader = this.loader) {
         addCandidate(loader.load(stream))
@@ -34,12 +41,11 @@ open class RadiantI18nManager(
         addCandidate(loader.loadFromResource(resourceClass, resourceName))
     }
 
-    fun loadCandidateFromResource(
+    inline fun <reified T> loadCandidateFromResource(
         resourceName: String,
         loader: RadiantI18nLoader = this.loader
     ) {
-        val callerClass = Reflect.getCallerClass()
-        loadCandidateFromResource(callerClass, resourceName, loader)
+        loadCandidateFromResource(T::class, resourceName, loader)
     }
 
     fun getCandidates(locale: Locale): List<RadiantI18nData>? {
@@ -103,6 +109,24 @@ open class RadiantI18nManager(
         }
 
         throw RuntimeException("Key $name not found in $locale")
+    }
+
+    fun matchLocale(sender: CommandSender): Locale {
+        val locale = when(sender) {
+            is Player -> sender.locale()
+            is ConsoleCommandSender -> this.consoleLocale
+            else -> this.fallbackLocale
+        }
+
+        if(locale in availableLocales) return locale
+
+        // Return if there's matching language, but not for country
+        availableLocales
+            .find { it.language == locale.language }
+            ?.let { return it }
+
+        // Return fallback locale
+        return fallbackLocale
     }
 
 }
